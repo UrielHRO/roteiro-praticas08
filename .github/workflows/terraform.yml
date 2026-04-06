@@ -6,7 +6,7 @@ on:
   workflow_dispatch: # Permite execução manual
 
 jobs:
-  terraform:
+  terraform_plan:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Código
@@ -19,12 +19,30 @@ jobs:
         run: terraform init
 
       - name: Terraform Validate
-        run: terraform validate # Valida se os arquivos .tf estão corretos
+        run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -out=plan.out # Gera o plano de execução
+        run: terraform plan -out=plan.out
+
+  terraform_apply:
+    needs: terraform_plan
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
 
       - name: Terraform Apply
-        # No GitHub, o "apply" automático em push é comum, 
-        # mas aqui ele executará após o plan.
         run: terraform apply -auto-approve plan.out
+
+      - name: Upload do arquivo gerado
+        uses: actions/upload-artifact@v4
+        with:
+          name: arquivo-terraform
+          path: uriel.txt
