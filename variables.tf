@@ -3,5 +3,5 @@ variable "file_name" {
 }
 
 variable "file_content" {
-  default = "Aqui teremos o conteúdo do arquivo de texto"
+  default = "Aqui teremos o conteúdo do arquivo de texto modificado"
 }
